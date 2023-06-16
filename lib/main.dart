@@ -29,8 +29,32 @@ class _HomeState extends State<Home> {
     return json.decode(response.body);
   }
 
+  final realController = TextEditingController();
+  final dolarController = TextEditingController();
+  final euroController = TextEditingController();
+
+  late double real;
   late double dolar;
   late double euro;
+
+  void _realChanges(String? text) {
+    double real = double.parse(text ?? '');
+    dolarController.text = (real / dolar).toStringAsFixed(2);
+    euroController.text = (real / euro).toStringAsFixed(2);
+  }
+
+  void _dolarChanges(String? text) {
+    double dolar = double.parse(text ?? '');
+    realController.text = (dolar * this.dolar).toStringAsFixed(2);
+    euroController.text = (dolar * this.dolar / euro).toStringAsFixed(2);
+  }
+
+  void _euroChanges(String? text) {
+    double euro = double.parse(text ?? '');
+    realController.text = (euro * this.euro).toStringAsFixed(2);
+    dolarController.text = (euro * this.euro / dolar).toStringAsFixed(2);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,38 +102,14 @@ class _HomeState extends State<Home> {
                       children: [
                         Icon(Icons.monetization_on,
                             size: 150, color: Colors.amber),
-                        TextField(
-                          decoration: InputDecoration(
-                              labelText: "Reais",
-                              labelStyle: TextStyle(
-                                color: Colors.amber,
-                              ),
-                              border: OutlineInputBorder(),
-                              prefixText: "R\$"),
-                          style: TextStyle(color: Colors.amber, fontSize: 25),
-                        ),
+                        buildTextField(
+                            "Reais", "R\$", realController, _realChanges),
                         Divider(),
-                        TextField(
-                          decoration: InputDecoration(
-                              labelText: "Dolares",
-                              labelStyle: TextStyle(
-                                color: Colors.amber,
-                              ),
-                              border: OutlineInputBorder(),
-                              prefixText: "US\$"),
-                          style: TextStyle(color: Colors.amber, fontSize: 25),
-                        ),
+                        buildTextField(
+                            "Dolares", "US\$", dolarController, _dolarChanges),
                         Divider(),
-                        TextField(
-                          decoration: InputDecoration(
-                              labelText: "Euros",
-                              labelStyle: TextStyle(
-                                color: Colors.amber,
-                              ),
-                              border: OutlineInputBorder(),
-                              prefixText: "€\$"),
-                          style: TextStyle(color: Colors.amber, fontSize: 25),
-                        ),
+                        buildTextField(
+                            "Euros", "€", euroController, _euroChanges),
                       ],
                     ),
                   );
@@ -120,4 +120,21 @@ class _HomeState extends State<Home> {
           }),
     );
   }
+}
+
+Widget buildTextField(
+    String label, String prefix, TextEditingController c, Function f) {
+  return TextField(
+    controller: c,
+    decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(
+          color: Colors.amber,
+        ),
+        border: OutlineInputBorder(),
+        prefixText: prefix),
+    style: TextStyle(color: Colors.amber, fontSize: 25),
+    onChanged: f(),
+    keyboardType: TextInputType.number,
+  );
 }
