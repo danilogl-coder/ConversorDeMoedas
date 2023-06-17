@@ -37,29 +37,55 @@ class _HomeState extends State<Home> {
   late double dolar;
   late double euro;
 
-  void _realChanges(String? text) {
+  void _clearAll()
+  {
+    realController.text = '';
+    dolarController.text = '';
+    euroController.text = '';
+  }
+
+  void _realChanges(String text) 
+  {
+    if(text.isEmpty)
+    {
+      _clearAll();
+      return;
+    }
     double real = double.parse(text ?? '');
     dolarController.text = (real / dolar).toStringAsFixed(2);
     euroController.text = (real / euro).toStringAsFixed(2);
   }
 
-  void _dolarChanges(String? text) {
+  void _dolarChanges(String text) 
+  {
+     if(text.isEmpty)
+    {
+      _clearAll();
+      return;
+    }
     double dolar = double.parse(text ?? '');
     realController.text = (dolar * this.dolar).toStringAsFixed(2);
     euroController.text = (dolar * this.dolar / euro).toStringAsFixed(2);
   }
 
-  void _euroChanges(String? text) {
+  void _euroChanges(String text) 
+  {
+     if(text.isEmpty)
+    {
+      _clearAll();
+      return;
+    }
     double euro = double.parse(text ?? '');
     realController.text = (euro * this.euro).toStringAsFixed(2);
     dolarController.text = (euro * this.euro / dolar).toStringAsFixed(2);
   }
+  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("\$ Conversor\$"),
+        title: const Text("\$ Conversor \$"),
         backgroundColor: Colors.amber,
         centerTitle: true,
       ),
@@ -123,7 +149,7 @@ class _HomeState extends State<Home> {
 }
 
 Widget buildTextField(
-    String label, String prefix, TextEditingController c, Function(String? value) f) {
+    String label, String prefix, TextEditingController c, Function(String value) f) {
   return TextField(
     controller: c,
     decoration: InputDecoration(
@@ -135,6 +161,6 @@ Widget buildTextField(
         prefixText: prefix),
     style: TextStyle(color: Colors.amber, fontSize: 25),
     onChanged: f,
-    keyboardType: TextInputType.number,
+    keyboardType: TextInputType.numberWithOptions(decimal:true),
   );
 }
